@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql');
 
 
+console.log('test kishor');
 
 const db = mysql.createConnection({
   host: 'localhost',
