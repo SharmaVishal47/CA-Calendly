@@ -52,7 +52,7 @@ export class ScheduleEventComponent implements OnInit {
         }
       }
     }, error => {
-      console.log('error====', error);
+
       const dialogConfig = new MatDialogConfig();
       dialogConfig.data = error;
       this.dialog.open(MessagedialogComponent, dialogConfig);
