@@ -6,6 +6,7 @@ import {ActivatedRoute, Params, Router} from '@angular/router';
 import {AuthService} from 'angular-6-social-login';
 import {CalendareventComponent} from '../../calendar-event/calendarevent.component';
 import {MessagedialogComponent} from '../../messagedialog/messagedialog.component';
+import {SignUpService} from '../../Auth/sign-up.service';
 @Component({
   selector: 'app-calendar-edit',
   templateUrl: './calendar-edit.component.html',
@@ -13,18 +14,17 @@ import {MessagedialogComponent} from '../../messagedialog/messagedialog.componen
 })
 export class CalendarEditComponent implements OnInit {
 
-  constructor(private dialog: MatDialog,private route: ActivatedRoute,private router:Router,private httpClient: HttpClient) { }
+  constructor(private dialog: MatDialog,private route: ActivatedRoute,private router:Router,private httpClient: HttpClient,public signUpService: SignUpService) { }
   email: string;
   calendarOption : [];
   event : string;
+  checkCalendar = false;
+  checkEvent = false;
   ngOnInit() {
     this.route.params.subscribe((params: Params) => {
       this.email = params['email'];
     });
-  }
-
-  openCalendarOption() {
-    this.httpClient.post<any>('http://localhost:3000/user/getcalendarlist',{email:this.email}).subscribe( (responseData)=>{
+    this.signUpService.getCalendarOptionListener().subscribe((responseData)=>{
       let arr = [];
       arr.push(1);
       let calMap = new Map();
@@ -37,82 +37,67 @@ export class CalendarEditComponent implements OnInit {
       dialogRef.afterClosed().subscribe(value => {
         if(value !== ''){
           this.calendarOption = value;
+          this.checkCalendar = true;
         }
       });
-    },error => {
-      console.log("error====",error);
-      const dialogConfig = new MatDialogConfig();
-      dialogConfig.data = error;
-      this.dialog.open(MessagedialogComponent, dialogConfig);
     });
-  }
-
-  /*openCalendarOption() {
-    let arr = [];
-    arr.push(1);
-    const dialogConfig = new MatDialogConfig();
-    let dummyData = ['Contacts','Holiday in India'];
-    dummyData.push(this.email)
-    dialogConfig.data = dummyData;
-    let dialogRef = this.dialog.open(CalendarOptionComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe(value => {
-      if(value !== ''){
-        this.calendarOption = value;
-      }
-    });
-  }*/
-  openCalendarEvent() {
-    /* const dialogConfig = new MatDialogConfig();
-    let dummyData = ['Contacts','Holiday in India'];
-    dummyData.push(this.email)
-    dialogConfig.data = dummyData;
-    let dialogRef = this.dialog.open(CalendareventComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe(value => {
-    if(value){
-    this.event = value;
-    }
-    });*/
-// Show the event in dialog box
-    this.httpClient.post<any>('http://localhost:3000/user/getcalendarlist',{email:this.email}).subscribe( (responseData)=>{
+    this.signUpService.getCalendarEventsListener().subscribe((responseData)=>{
       const dialogConfig = new MatDialogConfig();
       let eventIdArray = [];
       eventIdArray.push(responseData.record[0].id);
       dialogConfig.data = eventIdArray;
       let dialogRef = this.dialog.open(CalendareventComponent, dialogConfig);
       dialogRef.afterClosed().subscribe(value => {
-        if(value){
+        if(value !== ''){
+          console.log("value====",value);
           this.event = value;
+          this.checkEvent = true;
         }
       });
-    },error => {
-      console.log("error====",error);
-      const dialogConfig = new MatDialogConfig();
-      dialogConfig.data = error;
-      this.dialog.open(MessagedialogComponent, dialogConfig);
     });
-
   }
 
+  openCalendarOption() {
+    this.signUpService.getCalendarOptionList(this.email);
+  }
+
+  openCalendarEvent() {
+    this.signUpService.getCalendarEventsList(this.email);
+  }
 
   updateEventCalendar() {
-      let data =  {
-        eventType: this.event,
-        calnedarOption : this.calendarOption,
-        email : this.email
-      };
-      this.httpClient.post<any>('http://localhost:3000/user/updateCalendarEvent',data).subscribe((responseData)=>{
-        console.log("responseData====",responseData);
-        this.router.navigate(["availability/"+this.email]);
-      },error => {
-        console.log("error====",error);
-        const dialogConfig = new MatDialogConfig();
-        dialogConfig.data = error;
-        this.dialog.open(MessagedialogComponent, dialogConfig);
-      });
-  }
-
-  setUpLater() {
-    this.router.navigate(["availability/"+this.email]);
+    this.signUpService.updateCalendarEventOptions(this.event,this.calendarOption,this.email);
   }
 }
 
+
+/*  setUpLater() {
+    this.router.navigate(["availability/"+this.email]);
+  }*/
+
+/* const dialogConfig = new MatDialogConfig();
+let dummyData = ['Contacts','Holiday in India'];
+dummyData.push(this.email)
+dialogConfig.data = dummyData;
+let dialogRef = this.dialog.open(CalendareventComponent, dialogConfig);
+dialogRef.afterClosed().subscribe(value => {
+if(value){
+this.event = value;
+}
+});*/
+
+
+/*openCalendarOption() {
+  let arr = [];
+  arr.push(1);
+  const dialogConfig = new MatDialogConfig();
+  let dummyData = ['Contacts','Holiday in India'];
+  dummyData.push(this.email)
+  dialogConfig.data = dummyData;
+  let dialogRef = this.dialog.open(CalendarOptionComponent, dialogConfig);
+  dialogRef.afterClosed().subscribe(value => {
+    if(value !== ''){
+      this.calendarOption = value;
+    }
+  });
+}*/

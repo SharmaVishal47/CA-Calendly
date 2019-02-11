@@ -17,16 +17,17 @@ export class HeaderComponent implements OnInit,OnDestroy  {
   userId: string;
   isAuthenticated = false;
   private authListnerSubscription: Subscription;
-  private authStatusListener = new Subject<boolean>();
+
   constructor(private authService: AuthServiceLocal,private router:Router,private dialog: MatDialog) { }
 
   ngOnInit() {
-    this.isAuthenticated = this.authService.getIsAuthenticated();
-    this.authListnerSubscription = this.authService.getAuthStatusListener().subscribe(isAuth =>{
+    this.authListnerSubscription = this.authService.authStatusListener.subscribe(isAuth =>{
       this.isAuthenticated = isAuth;
       this.emailId = this.authService.getUserEmaild();
       this.userId = this.authService.getUserId();
     });
+    /* this.authService.autoAuthenticateUser();*/
+    this.isAuthenticated = this.authService.getIsAuthenticated();
   }
 
   ngOnDestroy() {
@@ -35,13 +36,17 @@ export class HeaderComponent implements OnInit,OnDestroy  {
 
   onLogout() {
     this.isAuthenticated = false;
-    this.authStatusListener.next(false);
-    this.router.navigate([""]);
+    this.authService.logout();
   }
 
   openDialog(){
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = "";
     this.dialog.open(ShareYourLinkComponentComponent, dialogConfig);
+  }
+
+  checkLogin() {
+    this.authService.autoAuthenticateUser();
+    /*routerLink="/login"*/
   }
 }

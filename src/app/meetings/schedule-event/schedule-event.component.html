@@ -10,7 +10,6 @@
             <p>{{selectedTime}}  -  {{meetingDateTime | date: "MM/dd/yyyy"}}</p>
             <p>Times are in - {{meetingTimeZone}}</p>
           </div>
-
         </div>
         <div class="col-lg-6">
           <div class="text-left">
@@ -19,7 +18,7 @@
               <form [formGroup]="meetingUserInfoForm" (ngSubmit)="onSubmit()">
                 <div class="form-group">
                   <label>Full Name</label>
-                  <input type="email" [ngClass]="{'has-error': !meetingUserInfoForm.get('fullName').valid && meetingUserInfoForm.get('fullName').touched}"
+                  <input type="text" [ngClass]="{'has-error': !meetingUserInfoForm.get('fullName').valid && meetingUserInfoForm.get('fullName').touched}"
                          formControlName="fullName" class="form-control" id="fullName" placeholder="fullname">
                   <span class="help-block" *ngIf="!meetingUserInfoForm.get('fullName').valid && meetingUserInfoForm.get('fullName').touched">
 <span class="text-danger" *ngIf="meetingUserInfoForm.get('fullName').errors" required>full name required</span>

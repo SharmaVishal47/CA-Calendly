@@ -7,18 +7,18 @@
         <p *ngIf="isSignInStatus === 0 || isSignInStatus === 2">Sign Up for CA Calendly and get a 14 day pro trial.</p>
         <p *ngIf="isSignInStatus === 1">Hi {{email}}!</p>
       </div>
-<!--if isSignInStatus === 0 -->
+      <!--if isSignInStatus === 0 -->
       <div class="card text-left" *ngIf="isSignInStatus === 0">
         <div class="card-body">
           <form [formGroup]="signUp" (ngSubmit)="onSubmit()">
-          <div class="form-group">
-            <label>Enter your email to get started.</label>
-            <input type="email" [ngClass]="{'has-error': !signUp.get('email').valid && signUp.get('email').touched}"
-                   formControlName="email" class="form-control" id="textName" placeholder="Email address">
-            <span class="help-block" *ngIf="!signUp.get('email').valid && signUp.get('email').touched">
+            <div class="form-group">
+              <label>Enter your email to get started.</label>
+              <input type="email" [ngClass]="{'has-error': !signUp.get('email').valid && signUp.get('email').touched}"
+                     formControlName="email" class="form-control" id="textName" placeholder="Email address">
+              <span class="help-block" *ngIf="!signUp.get('email').valid && signUp.get('email').touched">
           <span class="text-danger" *ngIf="signUp.get('email').errors" required>Email address required</span></span>
-          </div>
-          <button type="submit" class="btn btn-primary" [disabled]="!signUp.valid">Get Started</button>
+            </div>
+            <button type="submit" class="btn btn-primary" [disabled]="!signUp.valid">Get Started</button>
           </form>
         </div>
         <div class="text-left">
@@ -34,7 +34,7 @@
             <div class="form-group">
               <label>Enter your email to get started.</label>
               <input type="email" [ngClass]="{'has-error': !signUpForm.get('emailID').valid && signUpForm.get('emailID').touched}"
-                     formControlName="emailID" class="form-control" id="emailID" placeholder="Email address">
+                     formControlName="emailID" class="form-control" id="emailID" placeholder="Email address" [readonly]="true">
               <span class="help-block" *ngIf="!signUpForm.get('emailID').valid && signUpForm.get('emailID').touched">
           <span class="text-danger" *ngIf="signUpForm.get('emailID').errors" required>Email address required</span></span>
             </div>

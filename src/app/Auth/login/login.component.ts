@@ -14,7 +14,7 @@ import {AuthServiceLocal} from '../auth.service';
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
-  isLoginInStatus = 0;
+  isLoginInStatus = 2;
   email = '';
   loginForm1: FormGroup;
   param1;

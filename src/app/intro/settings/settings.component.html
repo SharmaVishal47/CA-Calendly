@@ -21,33 +21,33 @@
           </p>
         </mat-card-content>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div style="margin-left: 10px;margin-right: 10px;">
-        <div class="form-group row" style=" border: 2px solid grey;">
-          <p class="control-label col-sm-2 col-md-2" style="text-align: center;margin: auto">calendly.com/</p>
-          <div class="col-sm-10 col-md-10">
-            <input type="text" formControlName="userId" (change)="getUser($event)" class="form-control" id="userName"  placeholder="User Name" style=" border: none;">
+          <div style="margin-left: 10px;margin-right: 10px;">
+            <div class="form-group row" style=" border: 2px solid grey;">
+              <p class="control-label col-sm-2 col-md-2" style="text-align: center;margin: auto">calendly.com/</p>
+              <div class="col-sm-10 col-md-10">
+                <input type="text" formControlName="userId" (change)="getUser($event)" class="form-control" id="userName"  placeholder="User Name" style=" border: none;">
+              </div>
+            </div>
+            <label *ngIf="!validUserId" style="color: red">Username already exists</label>
+            <br/>
+            <br/>
           </div>
-        </div>
-          <label *ngIf="!validUserId" style="color: red">Username already exists</label>
-          <br/>
-          <br/>
-        </div>
-        <h6>Time Zone</h6>
-      <!--  <select style="width: auto;height: auto" formControlName="timeZone"  [value]='46'>
-          <option value="46">Select TimeZone</option>
-          <option value="India , Sri Lanka Time (3:50pm)">Asia/Kolkata</option>
-          <option value="saab">Pacific/Pago_Pago</option>
-          <option value="mercedes">America/Adak</option>
-          <option value="audi">America/Vancouver</option>
-        </select>-->
+          <h6>Time Zone</h6>
+          <!--  <select style="width: auto;height: auto" formControlName="timeZone"  [value]='46'>
+              <option value="46">Select TimeZone</option>
+              <option value="India , Sri Lanka Time (3:50pm)">Asia/Kolkata</option>
+              <option value="saab">Pacific/Pago_Pago</option>
+              <option value="mercedes">America/Adak</option>
+              <option value="audi">America/Vancouver</option>
+            </select>-->
           <ng2-timezone-picker
-          [timezone]="timeZone" (change)="changeTimezone($event)">
-        </ng2-timezone-picker>
-        <br/>
-        <mat-card-actions style="justify-content: flex-end;display: flex;">
-          <button mat-button >Cancel</button>
-          <button mat-button class="btn btn-primary" [disabled]="((!timeZoneStatus) && (!form.valid))">Continue</button>
-        </mat-card-actions>
+            [timezone]="timeZone" (change)="changeTimezone($event)">
+          </ng2-timezone-picker>
+          <br/>
+          <mat-card-actions style="justify-content: flex-end;display: flex;">
+            <!--<button mat-button >Cancel</button>-->
+            <button mat-button class="btn btn-primary" [disabled]="!form.valid">Continue</button>
+          </mat-card-actions>
         </form>
       </mat-card>
     </div>

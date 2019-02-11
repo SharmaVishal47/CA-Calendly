@@ -23,30 +23,25 @@ import {EventsMainPageComponent} from './Events/events-main-page/events-main-pag
 import {AccountSettingComponent} from './AccountSetting/account-setting/account-setting.component';
 import {AvailableDateTimeComponent} from './available-date-time/available-date-time.component';
 
-
-
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
-  {path: 'availableTime', component: AvailableDateTimeComponent},
-  {path: 'settings', component: AccountSettingComponent},
-  /*{path: 'eventMainPage', component: EventsMainPageComponent,canActivate: [AuthGuard]},*/
-  {path: 'eventMainPage', component: EventsMainPageComponent},
+  {path: 'dashboard/:email', component: DashboardComponent,canActivate: [AuthGuard]},
+  {path: 'eventMainPage', component: EventsMainPageComponent,canActivate: [AuthGuard]},
+  {path: 'settings', component: AccountSettingComponent,canActivate: [AuthGuard]},
+  {path: 'availableTime', component: AvailableDateTimeComponent,canActivate: [AuthGuard]},
+  {path: 'integrations/gotomeeting', component: GoTomeetingIntegrationComponent,canActivate: [AuthGuard]},
+  {path: 'integrations', component: IntegrationsComponent,canActivate: [AuthGuard]},
+  {path: 'settings/:email', component: SettingsComponent},
   {path: 'login', component: LoginComponent},
-  {path: 'integrations/gotomeeting', component: GoTomeetingIntegrationComponent},
-  {path: 'integrations', component: IntegrationsComponent},
   {path: 'signup', component: SignupComponent},
   {path: 'signup/:email', component: SignupComponent},
   {path: 'meeting', component: MettingComponent},
   {path: 'features', component: FeaturesComponent},
   {path: 'account', component: AccountComponent},
-  {path: 'settings/:email', component: SettingsComponent},
   {path: 'team', component: TeamComponent},
   {path: 'calendar/:email', component: CalendarEditComponent},
   {path: 'availability/:email', component: AvailbilityComponent},
   {path: 'userRole/:email', component: UserRoleComponentComponent},
-  {path: 'dashboard/:email', component: DashboardComponent},
-  /*{path: 'selectTime', component: ScheduleDateComponent},*/
- /* {path: 'schedulingPage', component: ScheduleEventComponent},*/
   {path: 'confirmedMeeting', component: ConfirmedComponent},
   {path: ':userId', component: SchedulingPageComponent},
   {path: ':userId/:selectTime', component: MettingComponent},
@@ -63,4 +58,3 @@ const appRoutes: Routes = [
 })
 
 export class AppRoutingModule {}
-

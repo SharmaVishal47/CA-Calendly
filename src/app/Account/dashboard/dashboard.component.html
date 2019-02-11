@@ -14,9 +14,9 @@
   <mat-card-content>
     <div style="margin-left: 8%; display: flex">
       <div style="display: flex">
-         <svg width="30" height="30">
-        <circle cx="15" cy="15" r="10" fill="#DFC12D"></circle>
-      </svg>
+        <svg width="30" height="30">
+          <circle cx="15" cy="15" r="10" fill="#DFC12D"></circle>
+        </svg>
         <button mat-button [matMenuTriggerFor]="menu"> Meeting 15 min</button>
         <mat-menu #menu="matMenu">
           <button mat-menu-item>Edit</button>
@@ -49,7 +49,7 @@
         </mat-menu>
       </div>
       <strong style="margin-left:45%; cursor: pointer; color: #393034">Show Filter
-      <!--<mat-icon> home</mat-icon>-->
+        <!--<mat-icon> home</mat-icon>-->
       </strong>
 
     </div>
@@ -77,12 +77,12 @@
           <svg width="30" height="30" style="margin-top: 5px">
             <circle cx="15" cy="15" r="10" fill="#DFC12D" *ngIf="data.eventType == '15min'"></circle>
             <circle cx="15" cy="15" r="10" fill="blue" *ngIf="data.eventType == '30min'"></circle>
-            <circle cx="15" cy="15" r="10" fill="#EE5353" *ngIf="data.eventType == '60min'"></circle>
+            <circle cx="15" cy="15" r="10" fill="red" *ngIf="data.eventType == '60min'"></circle>
           </svg>
           <p style="margin-top: 10px">{{data.meetingTime}}</p>
         </mat-panel-title>
         <mat-panel-description>
-<span> <a style="color: #00A2FF"> <b>{{fullName}}</b> </a> &nbsp; with you <br> <b >{{  data.eventType}} {{event}}</b>
+<span> <a style="color: #00A2FF"> <b>{{data.schedulerName}}</b> </a> &nbsp; with you <br> <b >{{  data.eventType}} {{event}}</b>
 </span>
         </mat-panel-description>
       </mat-expansion-panel-header>

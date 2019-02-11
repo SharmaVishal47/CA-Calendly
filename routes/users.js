@@ -3,7 +3,21 @@ const router = express.Router();
 const fs = require('fs');
 const {google} = require('googleapis');
 const googleAuth = require('google-auth-library');
+const jwt = require('jsonwebtoken');
+const checkAuth = require('../middleware/check-auth');
 
+router.post('/checkTokenUserId',(req,res,next)=>{
+  const decodedToken = jwt.verify(req.body.token,'secret-code-for-token');
+  if(decodedToken.userId === req.body.userId){
+    res.status(200).json({
+      message: 'Match Successfully.'
+    });
+  }else{
+    res.status(404).json({
+      message: 'Invalid Token'
+    });
+  }
+});
 
 router.post('/checkMeetingPlatform',(req,res,next)=>{
   console.log(req.body);
@@ -22,9 +36,7 @@ router.post('/checkMeetingPlatform',(req,res,next)=>{
   });
 });
 
-
 router.post('/getcalendarlist',(req,res,next)=>{
-
   let usernameQuery = "SELECT token_path FROM `calendly` WHERE email = '"+req.body.email+"'";
   db.query(usernameQuery, (err, result) => {
     if (err!==null) {
@@ -203,7 +215,7 @@ router.post('/updateConfiguration',(req,res,next)=>{
 
 router.post('/checkuseremail',(req,res,next)=>{
   console.log(req.body);
-  let usernameQuery = "SELECT email FROM `calendly` WHERE email = '" + req.body.email + "'";
+  let usernameQuery = "SELECT email,fullName FROM `calendly` WHERE email = '" + req.body.email + "'";
   db.query(usernameQuery, (err, result) => {
     console.log("result=====",result);
     console.log("err=====",err);
@@ -220,8 +232,6 @@ router.post('/checkuseremail',(req,res,next)=>{
 
 router.post('/checkemailpassword',(req,res,next)=>{
 
-
-
   console.log(req.body);
   let usernameQuery = "SELECT email, fullName, userId FROM `calendly` WHERE email = '" + req.body.emailID + "' AND password = '"+ req.body.password+"'";
   db.query(usernameQuery, (err, result) => {
@@ -230,10 +240,26 @@ router.post('/checkemailpassword',(req,res,next)=>{
     if (err!==null) {
       return res.status(500).send(err);
     }else {
-      res.status(200).json({
-        message: 'Search Successfully.',
-        data: result
-      });
+      if(result.length > 0){
+          let userId = result[0].userId;
+          console.log("UserId=====",userId);
+
+          const token = jwt.sign({
+            userId: userId
+          },'secret-code-for-token',{expiresIn: '1h'});
+
+          res.status(200).json({
+            message: 'Login Successfully.',
+            data: result,
+            token: token,
+            expiresIn: 3600
+        });
+      }else{
+        res.status(200).json({
+          message: 'Invalid Credentials',
+          data: result
+        });
+      }
     }
   });
 });
@@ -245,7 +271,10 @@ router.post('/checkuser',(req,res,next)=>{
     console.log("result=====",result);
     console.log("err=====",err);
     if (err!==null) {
-      return res.status(500).send(err);
+      return res.status(500).json({
+        message: 'Internal Server Error.',
+        data: err
+      });
     }else {
       res.status(200).json({
         message: 'Sign Up Successfully.',
@@ -280,7 +309,10 @@ router.post('/updateUserProfile',(req,res,next)=>{
     console.log("result=====",result);
     console.log("err=====",err);
     if (err!==null) {
-      return res.status(500).send(err);
+      return res.status(500).json({
+        message: 'Internal Server Error.',
+        data: err
+      });
     }else {
       res.status(200).json({
         message: 'userId updated Successfully.',
@@ -395,7 +427,7 @@ router.get('/signup/calendar',(req,res,next)=>{
 
 
 
-router.post('/login',(req,res,next)=>{
+/*router.post('/login',(req,res,next)=>{
   let fetchUser;
   User.findOne({
     email:req.body.email
@@ -430,7 +462,7 @@ router.post('/login',(req,res,next)=>{
   }).catch(err =>{
     console.log(err);
   });
-});
+});*/
 
 // Get the start time and end time from database
 router.post('/gettime',(req,res,next)=>{

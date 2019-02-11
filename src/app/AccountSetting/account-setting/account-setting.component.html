@@ -6,7 +6,7 @@
       <div class="dvMargin"><a (click)="enableSetting()" class="aCurrent">Profile</a></div>
       <div class="dvMargin"><a (click)="enableProfile()">Picture</a></div>
       <div class="dvMargin"><a (click)="enableMylink()">My link</a></div>
-      <div class="dvMargin"><a >Login</a></div>
+      <!--<div class="dvMargin"><a >Login</a></div>-->
     </div>
     <div class="col-md-6">
       <form [formGroup]="settingForm" (ngSubmit)="submitForm()">
@@ -319,7 +319,7 @@
           </select>
 
           <label for="timeZone">Time Zone</label>
-          <select class="form-control" id="timeZone"
+          <!--<select class="form-control" id="timeZone"
                   required
                   formControlName="timeZone">
             <option>English</option>
@@ -328,7 +328,11 @@
             <option>German</option>
             <option>Portuguese (Brazil)</option>
 
-          </select>
+
+          </select>-->
+          <ng2-timezone-picker
+            [timezone]="timeZone" id="timeZone" (change)="changeTimezone($event)">
+          </ng2-timezone-picker>
         </div>
         <div class="row">
           <div class="col-sm-12 text-center">
@@ -341,7 +345,7 @@
     </div>
     <div class="col-md-3">
       <button class="btn btn-primary-outline btn-md center-block"
-              Style="position:absolute;bottom:0; left: 50% ; border-radius: 0px;">Delete Account
+              Style="position:absolute;bottom:0; left: 50% ; border-radius: 0px;" (click)="onDeleteAccount()">Delete Account
       </button>
     </div>
   </div>
@@ -353,7 +357,7 @@
       <div class="dvMargin"><a (click)="enableSetting()">Profile</a></div>
       <div class="dvMargin"><a (click)="enableProfile()">Picture</a></div>
       <div class="dvMargin"><a (click)="enableMylink()" class="aCurrent">My link</a></div>
-      <div class="dvMargin"><a >Login</a></div>
+      <!--  <div class="dvMargin"><a >Login</a></div>-->
     </div>
     <div class="col-md-6">
       <span> Changing your Calendly URL will mean that all of your copied links will no longer work and will need to be updated.</span><br>
@@ -382,13 +386,13 @@
       <div class="dvMargin"><a (click)="enableSetting()">Profile</a></div>
       <div class="dvMargin"><a (click)="enableProfile()" class="aCurrent">Picture</a></div>
       <div class="dvMargin"><a (click)="enableMylink()">My link</a></div>
-      <div class="dvMargin"><a >Login</a></div>
+      <!--<div class="dvMargin"><a >Login</a></div>-->
     </div>
     <div class="col-md-6">
       <span> Upload pictures will display at the top of your Calendly page. (maximum file size of 5MB)</span><br>
       <form [formGroup]="profileForm" (ngSubmit)="submitMyProfileForm()">
         <div  style="margin-top: 5%">
-          <img [src]="imageSource" [alt]="profileForm.value" class="rounded-circle" height="150" width="150">
+          <img *ngIf="imageStatus" [src]="imagePreview!= null ? imagePreview : imageSource" [alt]="profileForm.value" class="rounded-circle" height="150" width="150">
           <input  type="file" name="file" #filePicker formControlName="file"  (change)="onImagePicked($event)"  class="cdk-visually-hidden" >
         </div>
         <div style="margin-top: 5%" >

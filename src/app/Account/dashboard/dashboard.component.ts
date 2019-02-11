@@ -22,7 +22,7 @@ export class DashboardComponent implements OnInit {
   constructor(private authService: AuthServiceLocal,private router:Router,  private  httpClient: HttpClient, private dialog: MatDialog) { }
 
   ngOnInit() {
-     this.fullName= this.authService.getFullName();
+    this.fullName= this.authService.getFullName();
     this.httpClient.post<any>('http://localhost:3000/meeting/getMeetingRecord',{userId: this.authService.getUserId()}).subscribe((responseData)=>{
       console.log("responseData====",responseData);
       this.responseData =  responseData.data;

@@ -15,14 +15,14 @@
         <form [formGroup]="calendarForm">
           <div class="container">
             <h6>What is your day-to-day role at work? </h6>
-              <p *ngFor="let item of data">
-                <input type="radio" name="role" value="{{item}}" (click)="checkAnswer(item)" formControlName="role"/>{{item}}<br />
-              </p>
+            <p *ngFor="let item of data">
+              <input type="radio" name="role" value="{{item}}" (click)="checkAnswer(item)" formControlName="role"/>{{item}}<br />
+            </p>
             <br/>
           </div>
-        <mat-card-actions>
-          <button class="btn btn-primary" mat-button (click)="updateRole()" [disabled]="calendarForm.invalid">Continue</button>
-        </mat-card-actions>
+          <mat-card-actions>
+            <button class="btn btn-primary" mat-button (click)="updateRole()" [disabled]="calendarForm.invalid">Continue</button>
+          </mat-card-actions>
         </form>
       </mat-card>
     </div>

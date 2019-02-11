@@ -61,6 +61,7 @@ export class ScheduleEventComponent implements OnInit {
     console.log('S -> ',this.goToMeetingStartDateTime);
     this._dateFormatEnd = this.meetingService.meetingEndTime(this.goToMeetingStartDateTime);
     console.log('E--> ',this._dateFormatEnd);
+
     this.meetingUserInfoForm = new FormGroup({
       fullName: new FormControl(null, [Validators.required]),
       email: new FormControl(null, [Validators.required])

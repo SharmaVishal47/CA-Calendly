@@ -5,6 +5,7 @@ import {MatDialog, MatDialogConfig} from '@angular/material';
 import {MessagedialogComponent} from '../../messagedialog/messagedialog.component';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
+import {el} from '@angular/platform-browser/testing/src/browser_util';
 
 @Component({
   selector: 'app-account-setting',
@@ -26,12 +27,15 @@ export class AccountSettingComponent implements OnInit {
   choosed: boolean;
   imageSource: string;
   imageStatus : boolean = false;
+  timeZone;
+  email;
 
   constructor(private dialog: MatDialog,private httpClient: HttpClient,private authService:AuthServiceLocal,private router:Router){
 
   }
 
   ngOnInit() {
+    this.email = this.authService.getUserEmaild();
     this.notChose=true;
     this.settingForm = new FormGroup({
       name: new FormControl(null, [Validators.required]),
@@ -39,8 +43,7 @@ export class AccountSettingComponent implements OnInit {
       language: new FormControl(null, [Validators.required]),
       dateFormat: new FormControl(null, [Validators.required]),
       timeFormat: new FormControl(null, [Validators.required]),
-      country: new FormControl(null, [Validators.required]),
-      timeZone: new FormControl(null, [Validators.required]),
+      country: new FormControl(null, [Validators.required])
       // Embed: new FormControl(null, [Validators.required]),
     });
 
@@ -61,17 +64,18 @@ export class AccountSettingComponent implements OnInit {
     this.httpClient.post<{message: string,data: []}>('http://localhost:3000/userData/userData',{'userId': this.userId}).subscribe(
       res =>{
         this.imageSource = res.data['0'].profilePic;
+        this.imageStatus=true;
         console.log("Image Source --->", this.imageSource);
         console.log("res===========",res);
         this.settingForm.patchValue({
-          name: res.data['0'].userName,
+          country: res.data['0'].country,
+          name: res.data['0'].fullName,
           welcome: res.data['0'].welcomeMessage,
           language: res.data['0'].language,
           dateFormat: res.data['0'].dateFormat,
           timeFormat: res.data['0'].timeFormat,
-          country: res.data['0'].country,
-          timeZone: res.data['0'].timeZone
         });
+        this.timeZone = res.data['0'].timeZone;
       },err => {
         console.log("Error=========",err.message);
         const dialogConfig = new MatDialogConfig();
@@ -84,6 +88,7 @@ export class AccountSettingComponent implements OnInit {
   submitForm() {
     let uid = this.settingForm.value;
     uid["userId"]=this.userId;
+    uid["timeZone"]  =  this.timeZone;
     console.log('---->',uid);
     this.httpClient.post<{message: string,data: []}>('http://localhost:3000/userData/addUserData',uid).subscribe((responseData)=>{
       console.log("settingForm responseData====",responseData.data);
@@ -91,7 +96,7 @@ export class AccountSettingComponent implements OnInit {
       dialogConfig.data = 'settingForm submitted';
       let dialogRef = this.dialog.open(MessagedialogComponent, dialogConfig);
       dialogRef.afterClosed().subscribe(value => {
-        this.router.navigate(['']);
+        this.router.navigate(["dashboard/"+this.email]);
       });
     },error => {
       console.log("error====",error);
@@ -200,4 +205,26 @@ export class AccountSettingComponent implements OnInit {
       reader.readAsDataURL((imageEvent.target as HTMLInputElement).files[0]);
     }
   }*/
+  onDeleteAccount() {
+    if(confirm("Are you sure You want to delete ?")) {
+      this.httpClient.post<{message: string,data: []}>('http://localhost:3000/userData/deleteProfile',{'id':this.userId}).subscribe((responseData)=>{
+        console.log("updateLink profile====",responseData);
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.data = 'profile deleted';
+        let dialogRef = this.dialog.open(MessagedialogComponent, dialogConfig);
+        dialogRef.afterClosed().subscribe(value => {
+          this.router.navigate(['']);
+        });
+      },error => {
+        console.log("error====",error);
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.data = error;
+        this.dialog.open(MessagedialogComponent, dialogConfig);
+      });
+    }
+
+  }
+  changeTimezone(timezone) {
+    this.timeZone = timezone;
+  }
 }

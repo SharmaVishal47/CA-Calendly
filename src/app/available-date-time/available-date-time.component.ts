@@ -20,10 +20,12 @@ export class AvailableDateTimeComponent implements OnInit {
   defaultEndTime:string;
   availableDays:[];
   item;
+  email;
   chk1;chk2;chk3;chk4;chk5;chk6;chk7;
 
   constructor(private router:Router,private httpClient: HttpClient,private route: ActivatedRoute,private fb: FormBuilder,private dialog: MatDialog , private authService:AuthServiceLocal) {}
   ngOnInit() {
+    this.email = this.authService.getUserEmaild();
     this.chk1 = <HTMLInputElement> document.getElementById("ch1");
     this.chk2 = <HTMLInputElement> document.getElementById("ch2");
     this.chk3 = <HTMLInputElement> document.getElementById("ch3");
@@ -107,7 +109,7 @@ export class AvailableDateTimeComponent implements OnInit {
   }
 
   setUpLater() {
-    //this.router.navigate(["userRole/"+this.email]);
+    this.router.navigate(["dashboard/"+this.email]);
   }
 
 }
