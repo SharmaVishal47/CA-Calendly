@@ -152,7 +152,7 @@ export class MettingComponent<D> implements OnInit {
         let tempSlot = this.availableSlotTemp;
 
         let currentTime = new Date();
-        currentTime.setHours(currentTime.getHours()+3);
+        currentTime.setHours(currentTime.getHours()+4);
 
         let userCurrentTime = new Date(currentTime).toLocaleString('en-US', {timeZone: this.userTimeZone});
         console.log("userCurrentTime================",userCurrentTime);
@@ -314,7 +314,7 @@ export class MettingComponent<D> implements OnInit {
     let tempSlot = this.availableSlotTemp;
 
     let currentTime = new Date();
-    currentTime.setHours(currentTime.getHours()+3);
+    currentTime.setHours(currentTime.getHours()+4);
 
     let userCurrentTime = new Date(currentTime).toLocaleString('en-US', {timeZone: this.userTimeZone});
     console.log("userCurrentTime================",userCurrentTime);

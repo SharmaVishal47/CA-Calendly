@@ -24,20 +24,6 @@ export class LoginComponent implements OnInit {
   constructor(private messageService:MessageServiceService , private fb: FormBuilder, private headerserviceService: HeaderserviceService, private socialAuthService: AuthService,private router:Router,private httpClient: HttpClient,private route: ActivatedRoute,private dialog: MatDialog,private authService:AuthServiceLocal) {}
   ngOnInit() {
     this.headerserviceService.getTokenExpiry();
- /*   this.param1 = this.route.snapshot.queryParamMap.get('code');
-    if(this.param1) {
-      this.httpClient.post<{message: string,data: []}>('https://dev.cloudmeetin.com/googleCalendar/generateToken',{_token: this.param1 }).subscribe((responseData)=>{
-        console.log("responseData====",responseData.data);
-        this.router.navigate(["/login"]);
-      },error => {
-        console.log("error====",error);
-        this.messageService.generateErrorMessage(error);
-       /!* const dialogConfig = new MatDialogConfig();
-        dialogConfig.data = error;
-        this.dialog.open(MessagedialogComponent, dialogConfig);*!/
-      });
-      console.log(this.param1);
-    }*/
 
     this.loginForm = this.fb.group({
       emailID: [ null, [ Validators.email,Validators.required ] ],

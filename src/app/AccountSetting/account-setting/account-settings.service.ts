@@ -51,12 +51,6 @@ export class AccountSettingsService {
       console.log("settingForm responseData====",responseData.data);
       this.router.navigate(["dashboard"]);
       this.messageService.generateSuccessMessage("Successfuly submitted the setting form.");
-      /*const dialogConfig = new MatDialogConfig();
-      dialogConfig.data = 'settingForm submitted';
-      let dialogRef = this.dialog.open(MessagedialogComponent, dialogConfig);
-      dialogRef.afterClosed().subscribe(value => {
-        this.router.navigate(["dashboard"]);
-      });*/
 
     },error => {
       console.log("error====",error);

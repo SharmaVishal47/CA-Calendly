@@ -53,6 +53,9 @@ export class ScheduleEventComponent implements OnInit {
       description:[null],
       reasonOfRescheduling:[null],
     });
+    this.meetingService.messageOff.subscribe(res=>{
+      this.isLoadingOne = res;
+    });
     if(this.authServiceLocal.getIsAuthenticated()){
       this.meetingService.removeHeader(false);
     }else{
@@ -87,15 +90,8 @@ export class ScheduleEventComponent implements OnInit {
     }, error => {
       console.log('error====', error);
       this.messageService.generateErrorMessage(error)
-      /*const dialogConfig = new MatDialogConfig();
-      dialogConfig.data = error;
-      this.dialog.open(MessagedialogComponent, dialogConfig);*/
     });
 
-    /*this.goToMeetingStartDateTime = this.meetingService.meetingStartTime();
-    console.log('S -> ',this.goToMeetingStartDateTime);
-    this._dateFormatEnd = this.meetingService.meetingEndTime(this.goToMeetingStartDateTime);
-    console.log('E--> ',this._dateFormatEnd);*/
 
     this.userName = localStorage.getItem('fullName');
     this.meetingTime = localStorage.getItem('eventType').split('m')[0] + ' Minute Meeting';
@@ -116,10 +112,6 @@ export class ScheduleEventComponent implements OnInit {
     }
   }
 
-/*
-  selectedPlatform(selectOption: string) {
-    this.meetingSelectedOption = selectOption;
-  }*/
 
   onSubmit() {
     let curDate = new Date();
@@ -144,7 +136,8 @@ export class ScheduleEventComponent implements OnInit {
           schedulerDescription: this.meetingUserInfoForm.value.description,
           reschedulerName: localStorage.getItem('fullName'),
           Meeting_owner: Meeting_owner,
-          createdDate: curDate
+          createdDate: curDate,
+          userTimeZone : this.userTimeZone
         };
       }else{
         this.data = {
@@ -160,7 +153,8 @@ export class ScheduleEventComponent implements OnInit {
           schedulerDescription: this.meetingUserInfoForm.value.description,
           reschedulerName: this.meetingUserInfoForm.value.fullName,
           Meeting_owner: Meeting_owner,
-          createdDate: curDate
+          createdDate: curDate,
+          userTimeZone : this.userTimeZone
         };
       }
     }else{
@@ -177,11 +171,12 @@ export class ScheduleEventComponent implements OnInit {
         schedulerDescription: this.meetingUserInfoForm.value.description,
         reschedulerName: this.meetingUserInfoForm.value.fullName,
         Meeting_owner: Meeting_owner,
-        createdDate: curDate
+        createdDate: curDate,
+        userTimeZone : this.userTimeZone
       };
     }
 
-
+  console.log("this.userTimeZone======",this.userTimeZone);
     this.meetIngData = {
       'subject': this.meetingUserInfoForm.value.fullName,
       'starttime': new Date(this.userStartTime),

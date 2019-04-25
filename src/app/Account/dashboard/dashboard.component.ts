@@ -32,7 +32,7 @@ import { slideInLeft} from 'ng-animate';
   ],
 })
 export class DashboardComponent implements OnInit {
-  allowClear = false;
+
   /* Dialog Functionality*/
   allChecked = true;
   indeterminate = false;
@@ -144,7 +144,9 @@ export class DashboardComponent implements OnInit {
 
         let set = new Set();
         for(let i=0;i<this.responseData.length;i++){
-          set.add(this.responseData[i].meetingDate);
+          let date = new Date(this.responseData[i].meetingDate);
+          date.setHours(0,0,0,0);
+          set.add(date);
         }
 
         set.forEach(value => {
@@ -157,7 +159,9 @@ export class DashboardComponent implements OnInit {
         for(let item of Array.from(set)){
           let myArrayMeeting = [];
           for(let i=0;i<this.responseData.length;i++){
-            if(item === this.responseData[i].meetingDate){
+            let date = new Date(this.responseData[i].meetingDate);
+            date.setHours(0,0,0,0);
+            if(Date.parse(item) === Date.parse(date.toString())){
               if(i == 0){
                 this.responseData[i]["activeStatus"] = true;
               }else{
@@ -232,7 +236,6 @@ export class DashboardComponent implements OnInit {
             this.EventTypeSlotDashboardForShow = response.data;
             this.EventTypeSlotDashboardForShow.splice(3);
           }
-
         }
       },
       err => {
@@ -241,29 +244,20 @@ export class DashboardComponent implements OnInit {
   }
 
   onChange(result: Date[]): void {
+    console.log("start Date===",result);
     if(result != null){
-      console.log("start Date===",result);
-      this.dateFrom = new Date(result[ 0 ]);
-      this.dateFrom.setHours(0,0,0);
+      if(result.length>0){
+        this.dateFrom = new Date(result[ 0 ]);
+        this.dateFrom.setHours(0,0,0);
 
-      this.dateTo = new Date(result[ 1 ]);
-      this.dateTo.setHours(23,59,59);
+        this.dateTo = new Date(result[ 1 ]);
+        this.dateTo.setHours(23,59,59);
 
-      this.filterByActive();
+        this.filterByActive();
+      }else{
+        this.resetFilter();
+      }
     }
-
-    /*this.meetingListMapSorted = new Map<any, any>();
-    this.meetingListMap.forEach((val, key) => {
-    if(key >= Date.parse(this.dateFrom.toString()) && key <= Date.parse(this.dateTo.toString())){
-    this.meetingListMapSorted.set(key,this.meetingListMap.get(key));
-    }
-    });
-    this.displaySize = 0;
-    this.meetingListMapSorted.forEach((val, key) => {
-    for(let i=0;i<this.meetingListMapSorted.get(key).length;i++){
-    this.displaySize = this.displaySize+1;
-    }
-    });*/
   }
 
   filterByEvent() {
@@ -282,7 +276,13 @@ export class DashboardComponent implements OnInit {
             for(let i=0;i< val.length;i++){
               for(let j=0;j<this.checkOptionsOne.length;j++){
                 if(this.checkOptionsOne[j].label === val[i].eventType && this.checkOptionsOne[j].checked){
-                  if(key >= Date.parse(this.dateFrom.toString()) && key <= Date.parse(this.dateTo.toString())){
+                  let dateFrom = new Date(this.dateFrom.toString());
+                  dateFrom.setHours(0,0,0,0);
+
+                  let dateTo = new Date(this.dateTo.toString());
+                  dateTo.setHours(0,0,0,0);
+
+                  if(key >= Date.parse(dateFrom.toString()) && key <= Date.parse(dateTo.toString())){
                     myArrayMeeting.push(val[i]);
                   }
                 }
@@ -321,7 +321,6 @@ export class DashboardComponent implements OnInit {
             }
           });
         }
-
         if(this.checkOptionsOneEvent[0].checked){
           this.meetingListMap.forEach((val, key) => {
             let myArrayMeeting = [];
@@ -342,7 +341,6 @@ export class DashboardComponent implements OnInit {
             }
           });
         }
-
         this.displaySize = 0;
         this.meetingListMapSorted.forEach((val, key) => {
           for(let i=0;i<this.meetingListMapSorted.get(key).length;i++){
@@ -363,7 +361,7 @@ export class DashboardComponent implements OnInit {
           return;
         }
         if(this.checkOptionsOneEvent[0].checked){
-//active events
+          //active events
           this.meetingListMap.forEach((val, key) => {
             let myArrayMeeting = [];
             for(let i=0;i<this.meetingListMap.get(key).length;i++){
@@ -377,7 +375,7 @@ export class DashboardComponent implements OnInit {
           });
         }
         if(this.checkOptionsOneEvent[1].checked){
-//cancel events
+          //cancel events
           this.meetingListMap.forEach((val, key) => {
             let myArrayMeeting = [];
             for(let i=0;i<this.meetingListMap.get(key).length;i++){
@@ -397,9 +395,6 @@ export class DashboardComponent implements OnInit {
           }
         });
       }
-
-
-
     }else{
       if(this.checkOptionsOne.length>0){
         this.meetingListMapSorted = new Map<any, any>();
@@ -444,7 +439,6 @@ export class DashboardComponent implements OnInit {
             }
           });
         }
-
         if(this.checkOptionsOneEvent[0].checked){
           this.meetingListMap.forEach((val, key) => {
             let myArrayMeeting = [];
@@ -469,7 +463,6 @@ export class DashboardComponent implements OnInit {
             this.displaySize = this.displaySize+1;
           }
         });
-
       }else{
         this.meetingListMapSorted = new Map<any, any>();
         if(this.checkOptionsOneEvent[0].checked && this.checkOptionsOneEvent[1].checked){
@@ -483,7 +476,7 @@ export class DashboardComponent implements OnInit {
           return;
         }
         if(this.checkOptionsOneEvent[0].checked){
-//active events
+        //active events
           this.meetingListMap.forEach((val, key) => {
             let myArrayMeeting = [];
             for(let i=0;i<this.meetingListMap.get(key).length;i++){
@@ -497,7 +490,7 @@ export class DashboardComponent implements OnInit {
           });
         }
         if(this.checkOptionsOneEvent[1].checked){
-//cancel events
+        //cancel events
           this.meetingListMap.forEach((val, key) => {
             let myArrayMeeting = [];
             for(let i=0;i<this.meetingListMap.get(key).length;i++){
@@ -552,11 +545,6 @@ export class DashboardComponent implements OnInit {
     dialogRef.afterClosed().subscribe(value => {
       if(value !== undefined){
         if(value !== "false"){
-          /*this.cancelMessage = value;
-          meetingDetail["cancelMessage"] = value;
-          meetingDetail["cancelBy"] = this.authService.getUserId();
-          this.meetingService.cancelMeetingSchedule(meetingDetail);
-          this.afterCancelMeeting(key,index,meetingDetail);*/
           this.cancelMessage = value;
           meetingDetail["cancelMessage"] = value;
           /*meetingDetail["cancelBy"] = this.authService.getUserId();*/
@@ -577,8 +565,6 @@ export class DashboardComponent implements OnInit {
   }
 
   onRescheduleMeeting(data: any) {
-    //localStorage.setItem('rescheduleRecord', JSON.stringify(data));
-    //this.meetingService.saveRescheduleRecord(data.eventType, data.schedulerEmail, this.authService.getUserId(), this.authService.getFullName(), data.eventID);
     this.router.navigate(['reschedule/'+data.meetingId]);
   }
 
@@ -683,9 +669,6 @@ export class DashboardComponent implements OnInit {
       });
     }
   }
-
-
-  /*end*/
 
   visibleContent(keyValue: string,index: number) {
     if(this.meetingListMapSorted.get(keyValue)[index]["cancel"] !== "true"){

@@ -128,32 +128,21 @@ export class AuthServiceLocal implements OnInit{
           this.isAuthenticated = true;
           this.router.navigate(['dashboard']);
           this.authStatusListener.next(true);
-
           const expiresIn = responseData.expiresIn;
           this.setAuthTimer(expiresIn);
           const now = new Date();
           const expirationDate = new Date(now.getTime() + expiresIn*1000);
           this.saveAuthData(this.token,expirationDate,responseData.data[0].userId,this.emailId);
-
         }else{
-          /*const dialogConfig = new MatDialogConfig();
-          dialogConfig.data = "Please Login Again";
-          this.dialog.open(MessagedialogComponent, dialogConfig);*/
           this.messageService.generateInfoMessage("Please Login Again");
           this.authStatusListener.next(false);
         }
       }else{
         this.messageService.generateErrorMessage("Invalid username/password.");
-        /*    const dialogConfig = new MatDialogConfig();
-        dialogConfig.data = "Invalid username/password.";
-        this.dialog.open(MessagedialogComponent, dialogConfig);*/
         this.authStatusListener.next(false);
       }
     },error => {
-      this.messageService.generateErrorMessage(error);
-      /* const dialogConfig = new MatDialogConfig();
-      dialogConfig.data = error;
-      this.dialog.open(MessagedialogComponent, dialogConfig);*/
+      this.messageService.generateErrorMessage("Something went gone wrong.");
       this.authStatusListener.next(false);
     });
   }

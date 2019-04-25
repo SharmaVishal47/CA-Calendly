@@ -28,6 +28,7 @@ export class MeetingService {
   authStatusListener = new Subject<boolean>();
   meetingPlatform = new Subject<any>();
   inetgrationGTMDetail = new Subject<any>();
+  messageOff = new Subject<any>();
   expectedDay: string;
   expectedDate;
   timeArray = [];
@@ -349,7 +350,7 @@ export class MeetingService {
         this.meetingPlatform.next(res);
       }, error => {
         console.log("error====", error);
-        this.messageService.generateErrorMessage(error);
+        this.messageService.generateErrorMessage("Something went gone wrong.");
         /*const dialogConfig = new MatDialogConfig();
         dialogConfig.data = error;
         this.dialog.open(MessagedialogComponent, dialogConfig);*/
@@ -569,10 +570,15 @@ export class MeetingService {
                 },
                 err => {
                   console.log('Meeting Error=========', err.message);
-                  this.showDialog(err.message);
+                  this.messageOff.next(false);
+                  this.showDialog("Something went gone wrong.");
                 });
-            }
+              }
           });
+      },error => {
+        console.log('Meeting Error=========', error.message);
+        this.messageOff.next(false);
+        this.showDialog("Something went gone wrong.");
       });
   }
 
@@ -604,6 +610,7 @@ export class MeetingService {
             console.log('Google Calendar integration======', responseData.data.id);
             this.insertEventIdInDatabase(responseData.data.id, insertId, (cb_one) => {
               if(cb_one == 200) {
+                this.meetIngData['userTimeZone'] = this.data.userTimeZone;
                 this.sendMeetingNotification(this.meetIngData, this.data.schedulerEmail, currentEmail, data.eventType, userName, (cb_two) => {
                   if(cb_two == 200) {
                     if (localStorage.getItem('UpdateQuery') === 'true') {
@@ -615,7 +622,8 @@ export class MeetingService {
                         if(cb_th == 200) {
                           this.meetingsConfirmation();
                         } else {
-                          this.showDialog(cb_th);
+                          this.messageOff.next(false);
+                          this.showDialog("Something went gone wrong.");
                         }
                       });
                     } else {
@@ -625,33 +633,40 @@ export class MeetingService {
                         if(cb == 200) {
                           this.meetingsConfirmation();
                         } else {
-                          this.showDialog(cb);
+                          this.messageOff.next(false);
+                          this.showDialog("Something went gone wrong.");
                         }
                       });
                     }
                   } else {
-                    this.showDialog(cb_two);
+                    this.messageOff.next(false);
+                    this.showDialog("Something went gone wrong.");
                   }
                 });
               } else {
-                this.showDialog(cb_one);
+                this.messageOff.next(false);
+                this.showDialog("Something went gone wrong.");
               }
             });
           }, error => {
             console.log('error CAL ====', error);
-            this.showDialog(error);
+            this.messageOff.next(false);
+            this.showDialog("Something went gone wrong.");
           });
         } else {
-          this.showDialog("TimeZone Error") ;
+          this.messageOff.next(false);
+          this.showDialog("Something went gone wrong.");
         }
         });
     }, error => {
       console.log('error====', error);
-      this.showDialog(error);
+      this.messageOff.next(false);
+      this.showDialog("Something went gone wrong.");
     });
   }
 
   addMeetingToDatabaseWithGTM(meetIngData, data) {
+
     let userName = localStorage.getItem('fullName');
     let timeZone = localStorage.getItem('selectedTimeZone');
     this.httpClient.post<any>('https://dev.cloudmeetin.com/meeting/addMeetingWithGtm', this.data).subscribe((responseData) => {
@@ -678,6 +693,7 @@ export class MeetingService {
           console.log("meetingData=========>", meetIngData);
           console.log("clientEmail=========>", this.data.schedulerEmail);
           console.log("email=========>", currentEmail);
+          this.meetIngData['userTimeZone'] = this.data.userTimeZone;
           this.httpClient.post<any>('https://dev.cloudmeetin.com/sendEmail/sendemail', {
             meetingData: meetIngData,
             clientEmail: this.data.schedulerEmail,
@@ -701,7 +717,8 @@ export class MeetingService {
                 this.meetingsConfirmation();
               }, error => {
                 console.log('error CAL ====', error);
-                this.showDialog(error);
+                this.messageOff.next(false);
+                this.showDialog("Something went gone wrong.");
               });
 
             } else {
@@ -716,21 +733,25 @@ export class MeetingService {
                 this.meetingsConfirmation();
               }, error => {
                 console.log('error CAL ====', error);
-                this.showDialog(error);
+                this.messageOff.next(false);
+                this.showDialog("Something went gone wrong.");
               });
             }
           }, error => {
             console.log('error CAL ====', error);
-            this.showDialog(error);
+            this.messageOff.next(false);
+            this.showDialog("Something went gone wrong.");
           });
         });
       }, error => {
         console.log('error CAL ====', error);
-        this.showDialog(error);
+        this.messageOff.next(false);
+        this.showDialog("Something went gone wrong.");
       });
     }, error => {
       console.log('error====', error);
-      this.showDialog(error);
+      this.messageOff.next(false);
+      this.showDialog("Something went gone wrong.");
     });
   }
 
@@ -994,39 +1015,26 @@ export class MeetingService {
                           meetingData['rescheduleRecord'] = JSON.parse(data.rescheduleRecord);
                           meetingData['rescheduleReason'] = data.rescheduleReason;
                           meetingData['reschedulerName'] = data.reschedulerName;
+                          meetingData['userTimeZone'] = data.userTimeZone;
+                          console.log("data.userTimeZone=========",data.userTimeZone);
                           this.sendMeetingNotification(meetingData, data.schedulerEmail, currentEmail,data.eventType,userName, (status) => {
                             if (status == 200) {
                               this.meetingsConfirmation();
-                              /*if (oldMeetingList) {
-                                this.appendMeetingTime(data, updateMeetingList, (_status) => {
-                                  if (_status == 200) {
-                                    this.meetingsConfirmation();
-                                  } else {
-                                    this.showDialog('Internal Server Error');
-                                  }
-                                });
-                              } else {
-                                this.insertMeetingTime(data, (statusRecord) => {
-                                  if (statusRecord == 200) {
-                                    /!* Called the meetingsConfirmation function*!/
-                                    this.meetingsConfirmation();
-                                  } else {
-                                    this.showDialog('Internal Server Error');
-                                  }
-                                });
-                              }*/
                             } else {
                               /* Called the meetingsConfirmation function*/
-                              this.showDialog('Notification Error!');
+                              this.messageOff.next(false);
+                              this.showDialog("Something went gone wrong.");
                             }
                           });
                         } else {
-                          this.showDialog('Google Calendar Error!');
+                          this.messageOff.next(false);
+                          this.showDialog("Something went gone wrong.");
                         }
                       });
                     },
                     err => {
-                      this.showDialog(err.message);
+                      this.messageOff.next(false);
+                      this.showDialog("Something went gone wrong.");
                     }
                   );
               }else{
@@ -1037,6 +1045,8 @@ export class MeetingService {
                     meetingData['rescheduleRecord'] = JSON.parse(data.rescheduleRecord);
                     meetingData['rescheduleReason'] = data.rescheduleReason;
                     meetingData['reschedulerName'] = data.reschedulerName;
+                    meetingData['userTimeZone'] = data.userTimeZone;
+                    console.log("data.userTimeZone=========",data.userTimeZone);
                     this.sendMeetingNotification(meetingData, data.schedulerEmail, currentEmail,data.eventType,userName, (status) => {
                       if (status == 200) {
                         this.meetingsConfirmation();
@@ -1061,11 +1071,13 @@ export class MeetingService {
                         }*/
                       } else {
                         /* Called the meetingsConfirmation function*/
-                        this.showDialog('Notification Error!');
+                        this.messageOff.next(false);
+                        this.showDialog("Something went gone wrong.");
                       }
                     });
                   } else {
-                    this.showDialog('Google Calendar Error!');
+                    this.messageOff.next(false);
+                    this.showDialog("Something went gone wrong.");
                   }
                 });
               }
@@ -1084,6 +1096,8 @@ export class MeetingService {
               meetingData['rescheduleRecord'] = JSON.parse(data.rescheduleRecord);
               meetingData['rescheduleReason'] = data.rescheduleReason;
               meetingData['reschedulerName'] = data.reschedulerName;
+              meetingData['userTimeZone'] = data.userTimeZone;
+              console.log("data.userTimeZone=========",data.userTimeZone);
               this.sendMeetingNotification(meetingData, data.schedulerEmail, currentEmail,data.eventType,userName, (status) => {
                 if (status == 200) {
                  /* this.appendMeetingTime(data, updateMeetingList, (_status) => {
@@ -1096,21 +1110,25 @@ export class MeetingService {
                   });*/
                   this.meetingsConfirmation();
                 } else {
-                  this.showDialog('Notification Error!');
+                  this.messageOff.next(false);
+                  this.showDialog("Something went gone wrong.");
                 }
               });
             } else {
-              this.showDialog('Google Calendar Error!');
+              this.messageOff.next(false);
+              this.showDialog("Something went gone wrong.");
             }
           });
         }
       }, error => {
         console.log('error CAL ====', error);
-        this.showDialog(error);
+        this.messageOff.next(false);
+        this.showDialog("Something went gone wrong.");
       });
     }, error => {
       console.log('error CAL ====', error);
-      this.showDialog(error);
+      this.messageOff.next(false);
+      this.showDialog("Something went gone wrong.");
     });
   }
 
@@ -1142,9 +1160,6 @@ export class MeetingService {
   /*This function used for show the confirmation page and remove the meeting's local storage data*/
   meetingsConfirmation() {
     this.router.navigate(['confirmedMeeting']);
-    /*localStorage.removeItem('rescheduleRecord');*/
-    /*localStorage.removeItem('UpdateQuery');
-    localStorage.removeItem('meetingTimeList');*/
   }
 
 

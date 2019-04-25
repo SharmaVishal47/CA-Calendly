@@ -75,7 +75,8 @@ export class CancelEventComponent implements OnInit {
       tokenPath: this.userRecords.token_path,
       userId: this.cancelMeetingResponse.userId,
       g2mMeetingId: this.cancelMeetingResponse.g2mMeetingId,
-      eventType: this.cancelMeetingResponse.eventType.split('m')[0]
+      eventType: this.cancelMeetingResponse.eventType.split('m')[0],
+      userTimeZone : this.userRecords.timeZone
     };
     this.meetingService.cancelMeetingScheduleByClient(this.cancelData, this.cancelMeetingUniqueId);
     this.cancelStatus = true;
